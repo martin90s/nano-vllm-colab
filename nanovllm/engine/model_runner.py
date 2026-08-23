@@ -26,7 +26,17 @@ class ModelRunner:
         dist.init_process_group("nccl", "tcp://localhost:2333", world_size=self.world_size, rank=rank)
         torch.cuda.set_device(rank)
         default_dtype = torch.get_default_dtype()
-        torch.set_default_dtype(hf_config.dtype)
+        model_dtype = getattr(hf_config, "dtype", None)
+        if model_dtype is None:
+            model_dtype = getattr(hf_config, "torch_dtype", None)
+        if isinstance(model_dtype, str):
+            model_dtype = getattr(torch, model_dtype)
+        if model_dtype is None:
+            model_dtype = torch.float16
+        if model_dtype == torch.bfloat16 and not torch.cuda.is_bf16_supported():
+            model_dtype = torch.float16
+        hf_config.dtype = model_dtype
+        torch.set_default_dtype(model_dtype)
         torch.set_default_device("cuda")
         self.model = Qwen3ForCausalLM(hf_config)
         load_model(self.model, config.model)
