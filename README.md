@@ -10,6 +10,8 @@
 
 A lightweight vLLM implementation built from scratch.
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/martin90s/nano-vllm-colab/blob/main/colab/nano_vllm_colab.ipynb)
+
 ## Key Features
 
 * 🚀 **Fast offline inference** - Comparable inference speeds to vLLM
